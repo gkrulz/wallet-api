@@ -42,6 +42,10 @@
         <slf4j.version>1.7.25</slf4j.version>
         <logback.classic.version>1.2.3</logback.classic.version>
         <commons.lang.version>3.8.1</commons.lang.version>
+
+        <jdbc.groupId>mysql</jdbc.groupId>
+        <jdbc.artifactId>mysql-connector-java</jdbc.artifactId>
+        <jdbc.version>5.1.9</jdbc.version>
     </properties>
 
     <dependencies>
@@ -181,6 +185,19 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
             <version>${commons.lang.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>${jdbc.groupId}</groupId>
+            <artifactId>${jdbc.artifactId}</artifactId>
+            <version>${jdbc.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jdbc</artifactId>
+            <version>${springframework.version}</version>
         </dependency>
     </dependencies>
 
