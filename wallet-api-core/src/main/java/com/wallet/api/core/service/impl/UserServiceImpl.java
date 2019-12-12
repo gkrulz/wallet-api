@@ -2,7 +2,6 @@ package com.wallet.api.core.service.impl;
 
 import com.wallet.api.beans.User;
 import com.wallet.api.core.repository.UserRepository;
-import com.wallet.api.core.repository.impl.UserRepositoryImpl;
 import com.wallet.api.core.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +15,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserServiceImpl implements UserService {
 
-    private static final Logger logger = LoggerFactory.getLogger(UserRepositoryImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
     @Autowired
     private UserRepository userRepository;
