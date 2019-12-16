@@ -1,5 +1,7 @@
 package com.wallet.api.web.controller;
 
+import com.wallet.api.beans.Transaction;
+import com.wallet.api.beans.TransactionRequest;
 import com.wallet.api.beans.Wallet;
 import com.wallet.api.core.service.WalletService;
 import org.slf4j.Logger;
@@ -31,5 +33,13 @@ public class WalletController {
         logger.info("Creating wallet for user {}", wallet.getUser().getId());
 
         return walletService.createWallet(wallet);
+    }
+
+    @PostMapping(value = "credit")
+    @ResponseStatus(HttpStatus.OK)
+    public Transaction credit(@RequestBody TransactionRequest request) {
+        logger.info("[Wallet] credit [{}] for wallet ID [{}] by user ID [{}]", request.getAmount(), request.getWalletId(), request.getUserId());
+
+        return walletService.credit(request);
     }
 }

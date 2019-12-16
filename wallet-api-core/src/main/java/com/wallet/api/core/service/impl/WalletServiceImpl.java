@@ -1,10 +1,13 @@
 package com.wallet.api.core.service.impl;
 
+import com.wallet.api.beans.Transaction;
+import com.wallet.api.beans.TransactionRequest;
 import com.wallet.api.beans.User;
 import com.wallet.api.beans.Wallet;
 import com.wallet.api.core.repository.WalletRepository;
 import com.wallet.api.core.repository.impl.UserRepositoryImpl;
 import com.wallet.api.core.repository.impl.WalletRepositoryImpl;
+import com.wallet.api.core.service.UserService;
 import com.wallet.api.core.service.WalletService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,13 +28,24 @@ public class WalletServiceImpl  implements WalletService {
     @Autowired
     private WalletRepository walletRepository;
 
-    @Override
-    public void credit(String userId, String walletId, Double amount) {
+    @Autowired
+    private UserService userService;
 
+    @Override
+    public Transaction credit(TransactionRequest request) {
+        logger.info("[Wallet] Credit [{}] for wallet ID [{}] by user ID [{}]", request.getAmount(), request.getWalletId(), request.getUserId());
+
+        // TODO Process promo codes
+
+        // TODO call credit repo method
+        Double balance = walletRepository.getBalance(request.getWalletId());
+        Transaction transaction = walletRepository.saveTransaction(request, balance + request.getAmount());
+
+        return transaction;
     }
 
     @Override
-    public void debit(String userId, String walletId, Double amount) {
+    public void debit(TransactionRequest request) {
 
     }
 
@@ -43,7 +57,10 @@ public class WalletServiceImpl  implements WalletService {
     public Wallet createWallet(Wallet wallet) {
         logger.info("[Wallet] create wallet for user {}", wallet.getUser().getId());
 
-        walletRepository.createWallet(wallet.getId());
+        User user = new User();
+        user.setId(wallet.getUser().getId());
+        user.setName(wallet.getUser().getName());
+        userService.createUser(user);
         walletRepository.createUserWallet(wallet);
 
         return wallet;

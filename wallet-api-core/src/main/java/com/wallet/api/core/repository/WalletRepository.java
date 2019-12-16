@@ -1,5 +1,7 @@
 package com.wallet.api.core.repository;
 
+import com.wallet.api.beans.Transaction;
+import com.wallet.api.beans.TransactionRequest;
 import com.wallet.api.beans.Wallet;
 
 /**
@@ -10,5 +12,7 @@ public interface WalletRepository {
 
     Wallet createUserWallet(Wallet wallet);
 
-    String createWallet(String walletId);
+    Transaction saveTransaction(TransactionRequest request, Double balance);
+
+    Double getBalance(String walletId);
 }

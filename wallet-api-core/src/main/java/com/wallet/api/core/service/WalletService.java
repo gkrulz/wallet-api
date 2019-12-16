@@ -1,5 +1,7 @@
 package com.wallet.api.core.service;
 
+import com.wallet.api.beans.Transaction;
+import com.wallet.api.beans.TransactionRequest;
 import com.wallet.api.beans.Wallet;
 
 /**
@@ -8,9 +10,9 @@ import com.wallet.api.beans.Wallet;
  */
 public interface WalletService {
 
-    void credit(String userId, String walletId, Double amount);
+    Transaction credit(TransactionRequest request);
 
-    void debit(String userId, String walletId, Double amount);
+    void debit(TransactionRequest request);
 
     Double checkBalance(String userId, String walletId);
 
