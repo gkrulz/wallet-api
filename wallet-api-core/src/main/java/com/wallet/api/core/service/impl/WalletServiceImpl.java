@@ -33,7 +33,7 @@ public class WalletServiceImpl implements WalletService {
     private UserService userService;
 
     @Override
-    public Transaction credit(TransactionRequest request) {
+    public synchronized Transaction credit(TransactionRequest request) {
         logger.info("[Wallet] Credit [{}] for wallet ID [{}] by user ID [{}]", request.getAmount(), request.getWalletId(), request.getUserId());
 
         // Process promo codes
@@ -49,7 +49,7 @@ public class WalletServiceImpl implements WalletService {
     }
 
     @Override
-    public Transaction debit(TransactionRequest request) {
+    public synchronized Transaction debit(TransactionRequest request) {
         logger.info("[Wallet] Debit [{}] from wallet ID [{}] by user ID [{}]", request.getAmount(), request.getWalletId(), request.getUserId());
 
         // Check if the funds are sufficient
@@ -66,7 +66,7 @@ public class WalletServiceImpl implements WalletService {
     }
 
     @Override
-    public Wallet checkBalance(String walletId) {
+    public synchronized Wallet checkBalance(String walletId) {
 
         Double balance = walletRepository.getBalance(walletId);
 
@@ -90,7 +90,7 @@ public class WalletServiceImpl implements WalletService {
         return wallet;
     }
 
-    public List<Transaction> getWalletHistory(String walletId) {
+    public synchronized List<Transaction> getWalletHistory(String walletId) {
         logger.info("[Wallet] retrieving wallet history for wallet ID [{}]", walletId);
 
         return walletRepository.getWalletHistory(walletId);
