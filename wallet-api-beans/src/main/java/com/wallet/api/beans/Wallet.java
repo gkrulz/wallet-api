@@ -23,7 +23,7 @@ public class Wallet implements Serializable {
 
     private static final long serialVersionUID = -5838222932933505471L;
     private String id;
-    private String balance;
+    private Double balance;
     private User user;
 
     public String getId() {
@@ -34,11 +34,11 @@ public class Wallet implements Serializable {
         this.id = id;
     }
 
-    public String getBalance() {
+    public Double getBalance() {
         return balance;
     }
 
-    public void setBalance(String balance) {
+    public void setBalance(Double balance) {
         this.balance = balance;
     }
 

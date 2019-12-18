@@ -12,7 +12,8 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -23,10 +24,10 @@ import java.util.UUID;
 @Repository
 public class WalletRepositoryImpl implements WalletRepository {
 
+    private static final Logger logger = LoggerFactory.getLogger(WalletRepositoryImpl.class);
+
     @Autowired
     private DataSource dataSource;
-
-    private static final Logger logger = LoggerFactory.getLogger(WalletRepositoryImpl.class);
 
     public Wallet createUserWallet(Wallet wallet) {
         String userId = wallet.getUser().getId();
@@ -54,11 +55,14 @@ public class WalletRepositoryImpl implements WalletRepository {
         NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 
         Long timeStamp = System.currentTimeMillis();
+        Double debit = request.getAmount() > 0 ? 0 : request.getAmount();
+        Double credit = request.getAmount() > 0 ? request.getAmount() : 0;
+
         MapSqlParameterSource parameters = new MapSqlParameterSource();
         parameters.addValue("id", UUID.randomUUID().toString());
         parameters.addValue("walletId", request.getWalletId());
-        parameters.addValue("debit", request.getAmount() > 0 ? 0 : request.getAmount());
-        parameters.addValue("credit", request.getAmount() > 0 ? request.getAmount() : 0);
+        parameters.addValue("debit", debit);
+        parameters.addValue("credit", credit);
         parameters.addValue("balance", balance);
         parameters.addValue("date", timeStamp);
 
@@ -72,8 +76,8 @@ public class WalletRepositoryImpl implements WalletRepository {
 
         Transaction transaction = new Transaction();
         transaction.setId(request.getId());
-        transaction.setCredit(request.getAmount() > 0 ? request.getAmount() : 0);
-        transaction.setDebit(request.getAmount() > 0 ? 0 : request.getAmount());
+        transaction.setCredit(credit);
+        transaction.setDebit(debit);
         transaction.setBalance(balance);
         transaction.setDateTs(timeStamp);
 
@@ -98,5 +102,34 @@ public class WalletRepositoryImpl implements WalletRepository {
 
         logger.info("result - {}", results);
         return results == null ? 0 : Double.parseDouble(results.get("BALANCE").toString());
+    }
+
+    public List<Transaction> getWalletHistory(String walletId) {
+        logger.info("Retrieving wallet history for wallet ID [{}]", walletId);
+
+        NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+        parameters.addValue("id", walletId);
+
+        List<Transaction> results = new ArrayList<>();
+        try {
+            String query = "SELECT * FROM WALLET_HISTORY WHERE WALLET_ID=:id ORDER BY DATE_TS DESC";
+            results = namedParameterJdbcTemplate.query(query,
+                  parameters,
+                  (resultSet, rowNum) -> {
+                      Transaction t = new Transaction();
+                      t.setId(resultSet.getString("ID"));
+                      t.setDebit(resultSet.getDouble("DEBIT"));
+                      t.setCredit(resultSet.getDouble("CREDIT"));
+                      t.setBalance(resultSet.getDouble("BALANCE"));
+                      t.setDateTs(resultSet.getLong("DATE_TS"));
+                      return t;
+                  });
+        } catch (Exception e) {
+            logger.error("Failed to retrieve the wallet balance ", e);
+        }
+
+        return results;
     }
 }
