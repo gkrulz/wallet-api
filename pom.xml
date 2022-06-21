@@ -45,7 +45,7 @@
 
         <jdbc.groupId>mysql</jdbc.groupId>
         <jdbc.artifactId>mysql-connector-java</jdbc.artifactId>
-        <jdbc.version>5.1.9</jdbc.version>
+        <jdbc.version>8.0.28</jdbc.version>
     </properties>
 
     <dependencies>
